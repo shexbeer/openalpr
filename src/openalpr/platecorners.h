@@ -49,7 +49,7 @@ class PlateCorners
     PlateCorners(Mat inputImage, PlateLines* plateLines, CharacterRegion* charRegion, Config* config);
     virtual ~PlateCorners();
 
-    vector<Point> findPlateCorners();
+    vector<cv::Point> findPlateCorners();
 
     float confidence;
 

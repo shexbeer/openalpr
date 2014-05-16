@@ -49,7 +49,7 @@ class CharacterSegmenter
     CharacterSegmenter(Mat img, bool invertedColors, Config* config);
     virtual ~CharacterSegmenter();
 
-    vector<Rect> characters;
+    vector<cv::Rect> characters;
     int confidence;
 
     vector<Mat> getThresholds();
@@ -65,37 +65,37 @@ class CharacterSegmenter
     vector<Mat> imgDbgGeneral;
     vector<Mat> imgDbgCleanStages;
 
-    vector<bool> filter(Mat img, vector<vector<Point> > contours, vector<Vec4i> hierarchy);
-    vector<bool> filterByBoxSize(vector< vector< Point> > contours, vector<bool> goodIndices, float minHeightPx, float maxHeightPx);
-    vector<bool> filterBetweenLines(Mat img, vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<Point> outerPolygon, vector<bool> goodIndices);
-    vector<bool> filterContourHoles(vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
+    vector<bool> filter(Mat img, vector<vector<cv::Point> > contours, vector<Vec4i> hierarchy);
+    vector<bool> filterByBoxSize(vector< vector< cv::Point> > contours, vector<bool> goodIndices, float minHeightPx, float maxHeightPx);
+    vector<bool> filterBetweenLines(Mat img, vector<vector<cv::Point> > contours, vector<Vec4i> hierarchy, vector<cv::Point> outerPolygon, vector<bool> goodIndices);
+    vector<bool> filterContourHoles(vector<vector<cv::Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
 
-    vector<Point> getBestVotedLines(Mat img, vector<vector<Point> > contours, vector<bool> goodIndices);
+    vector<cv::Point> getBestVotedLines(Mat img, vector<vector<cv::Point> > contours, vector<bool> goodIndices);
     int getGoodIndicesCount(vector<bool> goodIndices);
 
-    Mat getCharacterMask(Mat img_threshold, vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
-    Mat getCharBoxMask(Mat img_threshold, vector<Rect> charBoxes);
+    Mat getCharacterMask(Mat img_threshold, vector<vector<cv::Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
+    Mat getCharBoxMask(Mat img_threshold, vector<cv::Rect> charBoxes);
 
-    void removeSmallContours(vector<Mat> thresholds, vector<vector<vector<Point > > > allContours, float avgCharWidth, float avgCharHeight);
+    void removeSmallContours(vector<Mat> thresholds, vector<vector<vector<cv::Point > > > allContours, float avgCharWidth, float avgCharHeight);
 
     Mat getVerticalHistogram(Mat img, Mat mask);
-    vector<Rect> getHistogramBoxes(VerticalHistogram histogram, float avgCharWidth, float avgCharHeight, float* score);
-    vector<Rect> getBestCharBoxes(Mat img, vector<Rect> charBoxes, float avgCharWidth);
-    vector<Rect> combineCloseBoxes( vector<Rect> charBoxes, float avgCharWidth);
+    vector<cv::Rect> getHistogramBoxes(VerticalHistogram histogram, float avgCharWidth, float avgCharHeight, float* score);
+    vector<cv::Rect> getBestCharBoxes(Mat img, vector<cv::Rect> charBoxes, float avgCharWidth);
+    vector<cv::Rect> combineCloseBoxes( vector<cv::Rect> charBoxes, float avgCharWidth);
 
-    vector<Rect> get1DHits(Mat img, int yOffset);
+    vector<cv::Rect> get1DHits(Mat img, int yOffset);
 
-    void cleanCharRegions(vector<Mat> thresholds, vector<Rect> charRegions);
-    void cleanBasedOnColor(vector<Mat> thresholds, Mat colorMask, vector<Rect> charRegions);
-    void cleanMostlyFullBoxes(vector<Mat> thresholds, const vector<Rect> charRegions);
-    vector<Rect> filterMostlyEmptyBoxes(vector<Mat> thresholds, const  vector<Rect> charRegions);
-    void filterEdgeBoxes(vector<Mat> thresholds, const vector<Rect> charRegions, float avgCharWidth, float avgCharHeight);
+    void cleanCharRegions(vector<Mat> thresholds, vector<cv::Rect> charRegions);
+    void cleanBasedOnColor(vector<Mat> thresholds, Mat colorMask, vector<cv::Rect> charRegions);
+    void cleanMostlyFullBoxes(vector<Mat> thresholds, const vector<cv::Rect> charRegions);
+    vector<cv::Rect> filterMostlyEmptyBoxes(vector<Mat> thresholds, const  vector<cv::Rect> charRegions);
+    void filterEdgeBoxes(vector<Mat> thresholds, const vector<cv::Rect> charRegions, float avgCharWidth, float avgCharHeight);
 
     int getLongestBlobLengthBetweenLines(Mat img, int col);
 
-    int isSkinnyLineInsideBox(Mat threshold, Rect box, vector<vector<Point> > contours, vector<Vec4i> hierarchy, float avgCharWidth, float avgCharHeight);
+    int isSkinnyLineInsideBox(Mat threshold, cv::Rect box, vector<vector<cv::Point> > contours, vector<Vec4i> hierarchy, float avgCharWidth, float avgCharHeight);
 
-    vector<Point> getEncapsulatingLines(Mat img, vector<vector<Point> > contours, vector<bool> goodIndices);
+    vector<cv::Point> getEncapsulatingLines(Mat img, vector<vector<cv::Point> > contours, vector<bool> goodIndices);
 };
 
 #endif // OPENALPR_CHARACTERSEGMENTER_H

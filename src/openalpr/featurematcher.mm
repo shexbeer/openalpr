@@ -28,12 +28,14 @@ FeatureMatcher::FeatureMatcher(Config* config)
   this->config = config;
 
   //this->descriptorMatcher = DescriptorMatcher::create( "BruteForce-HammingLUT" );
-  this->descriptorMatcher = new BFMatcher(NORM_HAMMING, false);
+//TODO: fix it
+//  this->descriptorMatcher = new BFMatcher(NORM_HAMMING, false);
 
   //this->descriptorMatcher = DescriptorMatcher::create( "FlannBased" );
 
-  this->detector = new FastFeatureDetector(10, true);
-  this->extractor = new BRISK(10, 1, 0.9);
+//TODO: fix it
+//  this->detector = new FastFeatureDetector(10, true);
+//  this->extractor = new BRISK(10, 1, 0.9);
 }
 
 FeatureMatcher::~FeatureMatcher()
@@ -146,8 +148,8 @@ void FeatureMatcher::_surfStyleMatching(const Mat& queryDescriptors, vector<vect
 // We assume that license plates won't be upside-down or backwards.  So expect lines to be closely parallel
 void FeatureMatcher::crisscrossFiltering(const vector<KeyPoint> queryKeypoints, const vector<DMatch> inputMatches, vector<DMatch> &outputMatches)
 {
-  Rect crissCrossAreaVertical(0, 0, config->stateIdImageWidthPx, config->stateIdimageHeightPx * 2);
-  Rect crissCrossAreaHorizontal(0, 0, config->stateIdImageWidthPx * 2, config->stateIdimageHeightPx);
+  cv::Rect crissCrossAreaVertical(0, 0, config->stateIdImageWidthPx, config->stateIdimageHeightPx * 2);
+  cv::Rect crissCrossAreaHorizontal(0, 0, config->stateIdImageWidthPx * 2, config->stateIdimageHeightPx);
 
   for (int i = 0; i < billMapping.size(); i++)
   {
@@ -186,8 +188,8 @@ void FeatureMatcher::crisscrossFiltering(const vector<KeyPoint> queryKeypoints, 
         int intrCount = 0;
         for (int q = 0; q < vlines.size(); q++)
         {
-          Point vintr = vlines[j].intersection(vlines[q]);
-          Point hintr = hlines[j].intersection(hlines[q]);
+          cv::Point vintr = vlines[j].intersection(vlines[q]);
+          cv::Point hintr = hlines[j].intersection(hlines[q]);
           float vangleDiff = abs(vlines[j].angle - vlines[q].angle);
           float hangleDiff = abs(hlines[j].angle - hlines[q].angle);
           if (vintr.inside(crissCrossAreaVertical) && vangleDiff > 10)

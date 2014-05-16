@@ -40,7 +40,7 @@ OCR::~OCR()
   delete tesseract;
 }
 
-void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
+void OCR::performOCR(vector<Mat> thresholds, vector<cv::Rect> charRegions)
 {
   timespec startTime;
   getTime(&startTime);
@@ -59,7 +59,7 @@ void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
 
     for (int j = 0; j < charRegions.size(); j++)
     {
-      Rect expandedRegion = expandRect( charRegions[j], 2, 2, thresholds[i].cols, thresholds[i].rows) ;
+      cv::Rect expandedRegion = expandRect( charRegions[j], 2, 2, thresholds[i].cols, thresholds[i].rows) ;
 
       tesseract->SetRectangle(expandedRegion.x, expandedRegion.y, expandedRegion.width, expandedRegion.height);
       tesseract->Recognize(NULL);

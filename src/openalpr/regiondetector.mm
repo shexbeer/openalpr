@@ -69,17 +69,17 @@ vector<PlateRegion> RegionDetector::doCascade(Mat frame)
   int w = frame.size().width;
   int h = frame.size().height;
 
-  vector<Rect> plates;
+  vector<cv::Rect> plates;
 
   equalizeHist( frame, frame );
-  resize(frame, frame, Size(w * this->scale_factor, h * this->scale_factor));
+  resize(frame, frame, cv::Size(w * this->scale_factor, h * this->scale_factor));
 
   //-- Detect plates
   timespec startTime;
   getTime(&startTime);
 
-  Size minSize(config->minPlateSizeWidthPx * this->scale_factor, config->minPlateSizeHeightPx * this->scale_factor);
-  Size maxSize(w * config->maxPlateWidthPercent * this->scale_factor, h * config->maxPlateHeightPercent * this->scale_factor);
+  cv::Size minSize(config->minPlateSizeWidthPx * this->scale_factor, config->minPlateSizeHeightPx * this->scale_factor);
+  cv::Size maxSize(w * config->maxPlateWidthPercent * this->scale_factor, h * config->maxPlateHeightPercent * this->scale_factor);
 
 
   plate_cascade->detectMultiScale( frame, plates, config->detection_iteration_increase, 3,
@@ -109,9 +109,9 @@ vector<PlateRegion> RegionDetector::doCascade(Mat frame)
 
 }
 
-bool rectHasLargerArea(cv::Rect a, cv::Rect b) { return a.area() < b.area(); };
+bool RectHasLargerArea(cv::Rect a, cv::Rect b) { return a.area() < b.area(); };
 
-vector<PlateRegion> RegionDetector::aggregateRegions(vector<Rect> regions)
+vector<PlateRegion> RegionDetector::aggregateRegions(vector<cv::Rect> regions)
 {
   // Combines overlapping regions into a parent->child order.
   // The largest regions will be parents, and they will have children if they are within them.
@@ -121,10 +121,10 @@ vector<PlateRegion> RegionDetector::aggregateRegions(vector<Rect> regions)
   vector<PlateRegion> orderedRegions;
   vector<PlateRegion> topLevelRegions;
   
-  // Sort the list of rect regions smallest to largest
-  std::sort(regions.begin(), regions.end(), rectHasLargerArea);
+  // Sort the list of cv::Rect regions smallest to largest
+  std::sort(regions.begin(), regions.end(), RectHasLargerArea);
   
-  // Create new PlateRegions and attach the rectangles to each
+  // Create new PlateRegions and attach the cv::Rectangles to each
   for (int i = 0; i < regions.size(); i++)
   {
     PlateRegion newRegion;
@@ -137,10 +137,10 @@ vector<PlateRegion> RegionDetector::aggregateRegions(vector<Rect> regions)
     bool foundParent = false;
     for (int k = i + 1; k < orderedRegions.size(); k++)
     {
-      Point center( orderedRegions[i].rect.x + (orderedRegions[i].rect.width / 2),
+      cv::Point center( orderedRegions[i].rect.x + (orderedRegions[i].rect.width / 2),
 		    orderedRegions[i].rect.y + (orderedRegions[i].rect.height / 2));
       
-      // Check if the center of the smaller rectangle is inside the bigger rectangle.
+      // Check if the center of the smaller cv::Rectangle is inside the bigger cv::Rectangle.
       // If so, add it to the children and continue on.
       if (orderedRegions[k].rect.contains(center))
       {
@@ -153,7 +153,7 @@ vector<PlateRegion> RegionDetector::aggregateRegions(vector<Rect> regions)
 
     if (foundParent == false)
     {
-      // We didn't find any parents for this rectangle.  Add it to the top level regions
+      // We didn't find any parents for this cv::Rectangle.  Add it to the top level regions
       topLevelRegions.push_back(orderedRegions[i]);
     }
     
@@ -165,13 +165,13 @@ vector<PlateRegion> RegionDetector::aggregateRegions(vector<Rect> regions)
   for (int i = 0; i < regions.size(); i++)
   {
     // Draw all level
-    cv::rectangle(debugFrame, regions[i], Scalar(0, 0, 255), 2);
+    cv::cv::Rectangle(debugFrame, regions[i], Scalar(0, 0, 255), 2);
   }
   
   for (int i = 0; i < topLevelRegions.size(); i++)
   {
     // Draw top level
-    cv::rectangle(debugFrame, topLevelRegions[i].rect, Scalar(255, 0, 0), 2);
+    cv::cv::Rectangle(debugFrame, topLevelRegions[i].cv::Rect, Scalar(255, 0, 0), 2);
   }
   
   drawAndWait(&debugFrame);

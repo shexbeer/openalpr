@@ -44,6 +44,30 @@ AlprImpl::AlprImpl(const std::string country, const std::string configFile)
   this->defaultRegion = "";
   
 }
+
+AlprImpl::AlprImpl(const std::string country, const std::string configFile, const std::string runtimeDataDir) {
+    config = new Config(country, configFile, runtimeDataDir);
+    
+    // Config file or runtime dir not found.  Don't process any further.
+    if (config->loaded == false)
+    {
+        plateDetector = ALPR_NULL_PTR;
+        stateIdentifier = ALPR_NULL_PTR;
+        ocr = ALPR_NULL_PTR;
+        return;
+    }
+    
+    plateDetector = new RegionDetector(config);
+    stateIdentifier = new StateIdentifier(config);
+    ocr = new OCR(config);
+    setNumThreads(0);
+    
+    this->detectRegion = DEFAULT_DETECT_REGION;
+    this->topN = DEFAULT_TOPN;
+    this->defaultRegion = "";
+}
+
+
 AlprImpl::~AlprImpl()
 {
   delete config;
@@ -121,8 +145,8 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
       for (int z = 0; z < 4; z++)
       {
 	AlprCoordinate* coords = dispatcher.getRecognitionResults()[i].plate_points;
-	Point p1(coords[z].x, coords[z].y);
-	Point p2(coords[(z + 1) % 4].x, coords[(z + 1) % 4].y);
+	cv::Point p1(coords[z].x, coords[z].y);
+	cv::Point p2(coords[(z + 1) % 4].x, coords[(z + 1) % 4].y);
 	line(img, p1, p2, Scalar(255,0,255), 2);
       }
     }
@@ -343,11 +367,13 @@ void AlprImpl::setDefaultRegion(string region)
   this->defaultRegion = region;
 }
 
+
 std::string AlprImpl::getVersion()
 {
   std::stringstream ss;
   
-  ss << OPENALPR_MAJOR_VERSION << "." << OPENALPR_MINOR_VERSION << "." << OPENALPR_PATCH_VERSION;
+  //ss << OPENALPR_MAJOR_VERSION << "." << OPENALPR_MINOR_VERSION << "." << OPENALPR_PATCH_VERSION;
+  ss << "Version WIHTOUT FUCKING AMBIGIOUS CLASSES!!!";
   return ss.str();
 }
 

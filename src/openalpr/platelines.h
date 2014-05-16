@@ -42,7 +42,7 @@ class PlateLines
     vector<LineSegment> horizontalLines;
     vector<LineSegment> verticalLines;
 
-    vector<Point> winningCorners;
+    vector<cv::Point> winningCorners;
 
   private:
     Config* config;

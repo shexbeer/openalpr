@@ -105,11 +105,11 @@ void ColorFilter::findCharColors()
 
   Mat erodedCharMask(charMask.size(), CV_8U);
   Mat element = getStructuringElement( 1,
-                                       Size( 2 + 1, 2+1 ),
-                                       Point( 1, 1 ) );
+                                       cv::Size( 2 + 1, 2+1 ),
+                                       cv::Point( 1, 1 ) );
   erode(charMask, erodedCharMask, element);
 
-  vector<vector<Point> > contours;
+  vector<vector<cv::Point> > contours;
   vector<Vec4i> hierarchy;
   findContours(erodedCharMask, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
 
@@ -326,12 +326,12 @@ void ColorFilter::findCharColors()
   }
 
   Mat bigElement = getStructuringElement( 1,
-                                          Size( 3 + 1, 3+1 ),
-                                          Point( 1, 1 ) );
+                                          cv::Size( 3 + 1, 3+1 ),
+                                          cv::Point( 1, 1 ) );
 
   Mat smallElement = getStructuringElement( 1,
-                     Size( 1 + 1, 1+1 ),
-                     Point( 1, 1 ) );
+                     cv::Size( 1 + 1, 1+1 ),
+                     cv::Point( 1, 1 ) );
 
   morphologyEx(this->colorMask, this->colorMask, MORPH_CLOSE, bigElement);
   //dilate(this->colorMask, this->colorMask, bigElement);

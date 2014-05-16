@@ -114,7 +114,7 @@ LineSegment CharacterRegion::getBottomLine()
   return charAnalysis->bottomLine;
 }
 
-vector<Point> CharacterRegion::getCharArea()
+vector<cv::Point> CharacterRegion::getCharArea()
 {
   return charAnalysis->charArea;
 }

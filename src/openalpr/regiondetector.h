@@ -25,6 +25,7 @@
 
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/imgproc/types_c.h>
 #include "opencv2/core/core.hpp"
 #include "opencv2/ml/ml.hpp"
 
@@ -34,7 +35,7 @@
 
 struct PlateRegion
 {
-  Rect rect;
+  cv::Rect rect;
   vector<PlateRegion> children;
 };
 
@@ -58,7 +59,7 @@ class RegionDetector
 
     vector<PlateRegion> doCascade(Mat frame);
 
-    vector<PlateRegion> aggregateRegions(vector<Rect> regions);
+    vector<PlateRegion> aggregateRegions(vector<cv::Rect> regions);
 };
 
 #endif // OPENALPR_REGIONDETECTOR_H

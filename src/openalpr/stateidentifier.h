@@ -21,6 +21,8 @@
 #define OPENALPR_STATEIDENTIFIER_H
 
 #include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/imgproc/types_c.h>
+
 #include "constants.h"
 #include "featurematcher.h"
 #include "utility.h"
@@ -33,7 +35,7 @@ class StateIdentifier
     StateIdentifier(Config* config);
     virtual ~StateIdentifier();
 
-    int recognize(Mat img, Rect frame, char* stateCode);
+    int recognize(Mat img, cv::Rect frame, char* stateCode);
     int recognize(Mat img, char* stateCode);
 
     //int confidence;

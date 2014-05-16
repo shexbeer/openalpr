@@ -38,14 +38,14 @@
 using namespace std;
 using namespace cv;
 
-//vector<Rect> getCharacterRegions(Mat frame, vector<Rect> regionsOfInterest);
+//vector<cv::Rect> getCharacterRegions(Mat frame, vector<cv::Rect> regionsOfInterest);
 //vector<RotatedRect> getCharSegmentsBetweenLines(Mat img, vector<vector<Point> > contours, LineSegment top, LineSegment bottom);
 
 class LicensePlateCandidate
 {
 
   public:
-    LicensePlateCandidate(Mat frame, Rect regionOfInterest, Config* config);
+    LicensePlateCandidate(Mat frame, cv::Rect regionOfInterest, Config* config);
     virtual ~LicensePlateCandidate();
 
     float confidence;		// 0-100
@@ -62,12 +62,12 @@ class LicensePlateCandidate
     Config* config;
 
     Mat frame;
-    Rect plateRegion;
+    cv::Rect plateRegion;
 
-    Mat filterByCharacterHue(vector<vector<Point> > charRegionContours);
-    vector<Point> findPlateCorners(Mat inputImage, PlateLines plateLines, CharacterRegion charRegion);	// top-left, top-right, bottom-right, bottom-left
+    Mat filterByCharacterHue(vector<vector<cv::Point> > charRegionContours);
+    vector<cv::Point> findPlateCorners(Mat inputImage, PlateLines plateLines, CharacterRegion charRegion);	// top-left, top-right, bottom-right, bottom-left
 
-    vector<Point2f> transformPointsToOriginalImage(Mat bigImage, Mat smallImage, Rect region, vector<Point> corners);
+    vector<Point2f> transformPointsToOriginalImage(Mat bigImage, Mat smallImage, cv::Rect region, vector<cv::Point> corners);
     Mat deSkewPlate(Mat inputImage, vector<Point2f> corners);
 
 };

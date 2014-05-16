@@ -19,7 +19,7 @@
 
 #include "licenseplatecandidate.h"
 
-LicensePlateCandidate::LicensePlateCandidate(Mat frame, Rect regionOfInterest, Config* config)
+LicensePlateCandidate::LicensePlateCandidate(Mat frame, cv::Rect regionOfInterest, Config* config)
 {
   this->config = config;
 
@@ -42,10 +42,10 @@ void LicensePlateCandidate::recognize()
   int expandX = round(this->plateRegion.width * 0.20);
   int expandY = round(this->plateRegion.height * 0.15);
   // expand box by 15% in all directions
-  Rect expandedRegion = expandRect( this->plateRegion, expandX, expandY, frame.cols, frame.rows) ;
+  cv::Rect expandedRegion = expandRect( this->plateRegion, expandX, expandY, frame.cols, frame.rows) ;
 
   Mat plate_bgr = Mat(frame, expandedRegion);
-  resize(plate_bgr, plate_bgr, Size(config->templateWidthPx, config->templateHeightPx));
+  resize(plate_bgr, plate_bgr, cv::Size(config->templateWidthPx, config->templateHeightPx));
 
   Mat plate_gray;
   cvtColor(plate_bgr, plate_gray, CV_BGR2GRAY);
@@ -62,7 +62,7 @@ void LicensePlateCandidate::recognize()
     plateLines.processImage(plate_gray, &charRegion, 0.9);
 
     PlateCorners cornerFinder(plate_bgr, &plateLines, &charRegion, config);
-    vector<Point> smallPlateCorners = cornerFinder.findPlateCorners();
+    vector<cv::Point> smallPlateCorners = cornerFinder.findPlateCorners();
 
     if (cornerFinder.confidence > 0)
     {
@@ -82,7 +82,7 @@ void LicensePlateCandidate::recognize()
 }
 
 // Re-maps the coordinates from the smallImage to the coordinate space of the bigImage.
-vector<Point2f> LicensePlateCandidate::transformPointsToOriginalImage(Mat bigImage, Mat smallImage, Rect region, vector<Point> corners)
+vector<Point2f> LicensePlateCandidate::transformPointsToOriginalImage(Mat bigImage, Mat smallImage, cv::Rect region, vector<cv::Point> corners)
 {
   vector<Point2f> cornerPoints;
   for (int i = 0; i < corners.size(); i++)

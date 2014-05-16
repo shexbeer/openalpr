@@ -19,9 +19,9 @@
 
 #include "utility.h"
 
-Rect expandRect(Rect original, int expandXPixels, int expandYPixels, int maxX, int maxY)
+cv::Rect expandRect(cv::Rect original, int expandXPixels, int expandYPixels, int maxX, int maxY)
 {
-  Rect expandedRegion = Rect(original);
+  cv::Rect expandedRegion = cv::Rect(original);
 
   float halfX = round((float) expandXPixels / 2.0);
   float halfY = round((float) expandYPixels / 2.0);
@@ -46,16 +46,16 @@ Mat drawImageDashboard(vector<Mat> images, int imageType, int numColumns)
 {
   int numRows = ceil((float) images.size() / (float) numColumns);
 
-  Mat dashboard(Size(images[0].cols * numColumns, images[0].rows * numRows), imageType);
+  Mat dashboard(cv::Size(images[0].cols * numColumns, images[0].rows * numRows), imageType);
 
   for (int i = 0; i < numColumns * numRows; i++)
   {
     if (i < images.size())
-      images[i].copyTo(dashboard(Rect((i%numColumns) * images[i].cols, floor((float) i/numColumns) * images[i].rows, images[i].cols, images[i].rows)));
+      images[i].copyTo(dashboard(cv::Rect((i%numColumns) * images[i].cols, floor((float) i/numColumns) * images[i].rows, images[i].cols, images[i].rows)));
     else
     {
       Mat black = Mat::zeros(images[0].size(), imageType);
-      black.copyTo(dashboard(Rect((i%numColumns) * images[0].cols, floor((float) i/numColumns) * images[0].rows, images[0].cols, images[0].rows)));
+      black.copyTo(dashboard(cv::Rect((i%numColumns) * images[0].cols, floor((float) i/numColumns) * images[0].rows, images[0].cols, images[0].rows)));
     }
   }
 
@@ -70,18 +70,18 @@ Mat addLabel(Mat input, string label)
   const Scalar bg(222,222,222);
   const Scalar fg(0,0,0);
 
-  Rect destinationRect(border_size, extraHeight, input.cols, input.rows);
-  Mat newImage(Size(input.cols + (border_size), input.rows + extraHeight + (border_size )), input.type());
+  cv::Rect destinationRect(border_size, extraHeight, input.cols, input.rows);
+  Mat newImage(cv::Size(input.cols + (border_size), input.rows + extraHeight + (border_size )), input.type());
   input.copyTo(newImage(destinationRect));
 
   cout << " Adding label " << label << endl;
   if (input.type() == CV_8U)
     cvtColor(newImage, newImage, CV_GRAY2BGR);
 
-  rectangle(newImage, Point(0,0), Point(input.cols, extraHeight), bg, CV_FILLED);
-  putText(newImage, label, Point(5, extraHeight - 5), CV_FONT_HERSHEY_PLAIN  , 0.7, fg);
+  rectangle(newImage, cv::Point(0,0), cv::Point(input.cols, extraHeight), bg, CV_FILLED);
+  putText(newImage, label, cv::Point(5, extraHeight - 5), CV_FONT_HERSHEY_PLAIN  , 0.7, fg);
 
-  rectangle(newImage, Point(0,0), Point(newImage.cols - 1, newImage.rows -1), border_color, border_size);
+  rectangle(newImage, cv::Point(0,0), cv::Point(newImage.cols - 1, newImage.rows -1), border_color, border_size);
 
   return newImage;
 }
@@ -172,7 +172,7 @@ double median(int array[], int arraySize)
 Mat equalizeBrightness(Mat img)
 {
   // Divide the image by its morphologically closed counterpart
-  Mat kernel = getStructuringElement(MORPH_ELLIPSE, Size(19,19));
+  Mat kernel = getStructuringElement(MORPH_ELLIPSE, cv::Size(19,19));
   Mat closed;
   morphologyEx(img, closed, MORPH_CLOSE, kernel);
 
@@ -212,18 +212,18 @@ void fillMask(Mat img, const Mat mask, Scalar color)
   }
 }
 
-void drawX(Mat img, Rect rect, Scalar color, int thickness)
+void drawX(Mat img, cv::Rect rect, Scalar color, int thickness)
 {
-  Point tl(rect.x, rect.y);
-  Point tr(rect.x + rect.width, rect.y);
-  Point bl(rect.x, rect.y + rect.height);
-  Point br(rect.x + rect.width, rect.y + rect.height);
+  cv::Point tl(rect.x, rect.y);
+  cv::Point tr(rect.x + rect.width, rect.y);
+  cv::Point bl(rect.x, rect.y + rect.height);
+  cv::Point br(rect.x + rect.width, rect.y + rect.height);
 
   line(img, tl, br, color, thickness);
   line(img, bl, tr, color, thickness);
 }
 
-double distanceBetweenPoints(Point p1, Point p2)
+double distanceBetweenPoints(cv::Point p1, cv::Point p2)
 {
   float asquared = (p2.x - p1.x)*(p2.x - p1.x);
   float bsquared = (p2.y - p1.y)*(p2.y - p1.y);
@@ -231,7 +231,7 @@ double distanceBetweenPoints(Point p1, Point p2)
   return sqrt(asquared + bsquared);
 }
 
-float angleBetweenPoints(Point p1, Point p2)
+float angleBetweenPoints(cv::Point p1, cv::Point p2)
 {
   int deltaY = p2.y - p1.y;
   int deltaX = p2.x - p1.x;
@@ -239,17 +239,17 @@ float angleBetweenPoints(Point p1, Point p2)
   return atan2((float) deltaY, (float) deltaX) * (180 / CV_PI);
 }
 
-Size getSizeMaintainingAspect(Mat inputImg, int maxWidth, int maxHeight)
+cv::Size getSizeMaintainingAspect(Mat inputImg, int maxWidth, int maxHeight)
 {
   float aspect = ((float) inputImg.cols) / ((float) inputImg.rows);
 
   if (maxWidth / aspect > maxHeight)
   {
-    return Size(maxHeight * aspect, maxHeight);
+    return cv::Size(maxHeight * aspect, maxHeight);
   }
   else
   {
-    return Size(maxWidth, maxWidth / aspect);
+    return cv::Size(maxWidth, maxWidth / aspect);
   }
 }
 
@@ -258,7 +258,7 @@ LineSegment::LineSegment()
   init(0, 0, 0, 0);
 }
 
-LineSegment::LineSegment(Point p1, Point p2)
+LineSegment::LineSegment(cv::Point p1, cv::Point p2)
 {
   init(p1.x, p1.y, p2.x, p2.y);
 }
@@ -270,8 +270,8 @@ LineSegment::LineSegment(int x1, int y1, int x2, int y2)
 
 void LineSegment::init(int x1, int y1, int x2, int y2)
 {
-  this->p1 = Point(x1, y1);
-  this->p2 = Point(x2, y2);
+  this->p1 = cv::Point(x1, y1);
+  this->p2 = cv::Point(x2, y2);
 
   if (p2.x - p1.x == 0)
     this->slope = 0.00000000001;
@@ -283,7 +283,7 @@ void LineSegment::init(int x1, int y1, int x2, int y2)
   this->angle = angleBetweenPoints(p1, p2);
 }
 
-bool LineSegment::isPointBelowLine( Point tp )
+bool LineSegment::isPointBelowLine( cv::Point tp )
 {
   return ((p2.x - p1.x)*(tp.y - p1.y) - (p2.y - p1.y)*(tp.x - p1.x)) > 0;
 }
@@ -293,7 +293,7 @@ float LineSegment::getPointAt(float x)
   return slope * (x - p2.x) + p2.y;
 }
 
-Point LineSegment::closestPointOnSegmentTo(Point p)
+cv::Point LineSegment::closestPointOnSegmentTo(cv::Point p)
 {
   float top = (p.x - p1.x) * (p2.x - p1.x) + (p.y - p1.y)*(p2.y - p1.y);
 
@@ -305,10 +305,10 @@ Point LineSegment::closestPointOnSegmentTo(Point p)
   float x = p1.x + u * (p2.x - p1.x);
   float y = p1.y + u * (p2.y - p1.y);
 
-  return Point(x, y);
+  return cv::Point(x, y);
 }
 
-Point LineSegment::intersection(LineSegment line)
+cv::Point LineSegment::intersection(LineSegment line)
 {
   float c1, c2;
   float intersection_X = -1, intersection_Y= -1;
@@ -324,12 +324,12 @@ Point LineSegment::intersection(LineSegment line)
   else if (p1.x == p2.x)
   {
     // Line1 is vertical
-    return Point(p1.x, line.getPointAt(p1.x));
+    return cv::Point(p1.x, line.getPointAt(p1.x));
   }
   else if (line.p1.x == line.p2.x)
   {
     // Line2 is vertical
-    return Point(line.p1.x, getPointAt(line.p1.x));
+    return cv::Point(line.p1.x, getPointAt(line.p1.x));
   }
   else
   {
@@ -337,23 +337,23 @@ Point LineSegment::intersection(LineSegment line)
     intersection_Y = slope * intersection_X + c1;
   }
 
-  return Point(intersection_X, intersection_Y);
+  return cv::Point(intersection_X, intersection_Y);
 }
 
-Point LineSegment::midpoint()
+cv::Point LineSegment::midpoint()
 {
   // Handle the case where the line is vertical
   if (p1.x == p2.x)
   {
     float ydiff = p2.y-p1.y;
     float y = p1.y + (ydiff/2);
-    return Point(p1.x, y);
+    return cv::Point(p1.x, y);
   }
   float diff = p2.x - p1.x;
   float midX = ((float) p1.x) + (diff / 2);
   int midY = getPointAt(midX);
 
-  return Point(midX, midY);
+  return cv::Point(midX, midY);
 }
 
 LineSegment LineSegment::getParallelLine(float distance)

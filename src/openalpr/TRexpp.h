@@ -27,9 +27,9 @@
 
 ****************************************************************/
 
-extern "C" {
+//extern "C" {
 #include "trex.h"
-}
+//}
 
 struct TRexParseException
 {

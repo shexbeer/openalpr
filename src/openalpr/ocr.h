@@ -30,7 +30,8 @@
 #include "constants.h"
 #include "opencv2/imgproc/imgproc.hpp"
 
-#include "tesseract/baseapi.h"
+#include <baseapi.h>
+
 using namespace  tesseract;
 using namespace std;
 using namespace cv;
@@ -42,7 +43,7 @@ class OCR
     OCR(Config* config);
     virtual ~OCR();
 
-    void performOCR(vector<Mat> thresholds, vector<Rect> charRegions);
+    void performOCR(vector<Mat> thresholds, vector<cv::Rect> charRegions);
 
     PostProcess* postProcessor;
     //string recognizedText;

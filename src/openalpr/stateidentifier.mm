@@ -39,7 +39,7 @@ StateIdentifier::~StateIdentifier()
   delete featureMatcher;
 }
 
-int StateIdentifier::recognize(Mat img, Rect frame, char* stateCode)
+int StateIdentifier::recognize(Mat img, cv::Rect frame, char* stateCode)
 {
   Mat croppedImage = Mat(img, frame);
 

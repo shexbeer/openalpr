@@ -33,8 +33,8 @@ PlateCorners::PlateCorners(Mat inputImage, PlateLines* plateLines, CharacterRegi
   this->bestHorizontalScore = 9999999999999;
   this->bestVerticalScore = 9999999999999;
 
-  Point topPoint = charRegion->getTopLine().midpoint();
-  Point bottomPoint = charRegion->getBottomLine().closestPointOnSegmentTo(topPoint);
+  cv::Point topPoint = charRegion->getTopLine().midpoint();
+  cv::Point bottomPoint = charRegion->getBottomLine().closestPointOnSegmentTo(topPoint);
   this->charHeight = distanceBetweenPoints(topPoint, bottomPoint);
 
   //this->charHeight = distanceBetweenPoints(charRegion->getCharArea()[0], charRegion->getCharArea()[3]);
@@ -49,7 +49,7 @@ PlateCorners::~PlateCorners()
 {
 }
 
-vector<Point> PlateCorners::findPlateCorners()
+vector<cv::Point> PlateCorners::findPlateCorners()
 {
   if (this->config->debugPlateCorners)
     cout << "PlateCorners::findPlateCorners" << endl;
@@ -107,7 +107,7 @@ vector<Point> PlateCorners::findPlateCorners()
   else
     confidence = 100;
 
-  vector<Point> corners;
+  vector<cv::Point> corners;
   corners.push_back(bestTop.intersection(bestLeft));
   corners.push_back(bestTop.intersection(bestRight));
   corners.push_back(bestBottom.intersection(bestRight));
@@ -136,8 +136,8 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   if (v1 == NO_LINE && v2 == NO_LINE)
   {
     //return;
-    Point centerTop = charRegion->getCharBoxTop().midpoint();
-    Point centerBottom = charRegion->getCharBoxBottom().midpoint();
+    cv::Point centerTop = charRegion->getCharBoxTop().midpoint();
+    cv::Point centerBottom = charRegion->getCharBoxBottom().midpoint();
     LineSegment centerLine = LineSegment(centerBottom.x, centerBottom.y, centerTop.x, centerTop.y);
 
     left = centerLine.getParallelLine(idealPixelWidth / 2);
@@ -193,8 +193,8 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   // SCORE the shape wrt character position and height relative to position
   //////////////////////////////////////////////////////////////////////////
 
-  Point leftMidLinePoint = left.closestPointOnSegmentTo(charRegion->getCharBoxLeft().midpoint());
-  Point rightMidLinePoint = right.closestPointOnSegmentTo(charRegion->getCharBoxRight().midpoint());
+  cv::Point leftMidLinePoint = left.closestPointOnSegmentTo(charRegion->getCharBoxLeft().midpoint());
+  cv::Point rightMidLinePoint = right.closestPointOnSegmentTo(charRegion->getCharBoxRight().midpoint());
 
   float plateDistance = abs(idealPixelWidth - distanceBetweenPoints(leftMidLinePoint, rightMidLinePoint));
 
@@ -251,8 +251,8 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   if (h1 == NO_LINE && h2 == NO_LINE)
   {
 //    return;
-    Point centerLeft = charRegion->getCharBoxLeft().midpoint();
-    Point centerRight = charRegion->getCharBoxRight().midpoint();
+    cv::Point centerLeft = charRegion->getCharBoxLeft().midpoint();
+    cv::Point centerRight = charRegion->getCharBoxRight().midpoint();
     LineSegment centerLine = LineSegment(centerLeft.x, centerLeft.y, centerRight.x, centerRight.y);
 
     top = centerLine.getParallelLine(idealPixelHeight / 2);
@@ -302,8 +302,8 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   // SCORE the shape wrt character position and height relative to position
   //////////////////////////////////////////////////////////////////////////
 
-  Point topPoint = top.midpoint();
-  Point botPoint = bottom.closestPointOnSegmentTo(topPoint);
+  cv::Point topPoint = top.midpoint();
+  cv::Point botPoint = bottom.closestPointOnSegmentTo(topPoint);
   float plateHeightPx = distanceBetweenPoints(topPoint, botPoint);
 
   // Get the height difference
@@ -329,9 +329,9 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   // SCORE the middliness of the stuff.  We want our top and bottom line to have the characters right towards the middle
   //////////////////////////////////////////////////////////////////////////
 
-  Point charAreaMidPoint = charRegion->getCharBoxLeft().midpoint();
-  Point topLineSpot = top.closestPointOnSegmentTo(charAreaMidPoint);
-  Point botLineSpot = bottom.closestPointOnSegmentTo(charAreaMidPoint);
+  cv::Point charAreaMidPoint = charRegion->getCharBoxLeft().midpoint();
+  cv::Point topLineSpot = top.closestPointOnSegmentTo(charAreaMidPoint);
+  cv::Point botLineSpot = bottom.closestPointOnSegmentTo(charAreaMidPoint);
 
   float topDistanceFromMiddle = distanceBetweenPoints(topLineSpot, charAreaMidPoint);
   float bottomDistanceFromMiddle = distanceBetweenPoints(topLineSpot, charAreaMidPoint);

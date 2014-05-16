@@ -54,7 +54,7 @@ void CharacterAnalysis::analyze()
     // Morph Close the gray image to make it easier to detect blobs
     int morph_elem  = 1;
     int morph_size = 1;
-    Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
+    Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), cv::Point( morph_size, morph_size ) );
 
     for (int i = 0; i < thresholds.size(); i++)
     {
@@ -69,7 +69,7 @@ void CharacterAnalysis::analyze()
 
   for (int i = 0; i < thresholds.size(); i++)
   {
-    vector<vector<Point> > contours;
+    vector<vector<cv::Point> > contours;
     vector<Vec4i> hierarchy;
 
     Mat tempThreshold(thresholds[i].size(), CV_8U);
@@ -156,7 +156,7 @@ void CharacterAnalysis::analyze()
     bestThreshold.copyTo(img_contours);
     cvtColor(img_contours, img_contours, CV_GRAY2RGB);
 
-    vector<vector<Point> > allowedContours;
+    vector<vector<cv::Point> > allowedContours;
     for (int i = 0; i < bestContours.size(); i++)
     {
       if (bestCharSegments[i])
@@ -302,19 +302,19 @@ Mat CharacterAnalysis::findOuterBoxMask()
     // Morph Open the mask to get rid of any little connectors to non-plate portions
     int morph_elem  = 2;
     int morph_size = 3;
-    Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
+    Mat element = getStructuringElement( morph_elem, cv::Size( 2*morph_size + 1, 2*morph_size+1 ), cv::Point( morph_size, morph_size ) );
 
     //morphologyEx( mask, mask, MORPH_CLOSE, element );
     morphologyEx( mask, mask, MORPH_OPEN, element );
 
     //morph_size = 1;
-    //element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
+    //element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), cv::Point( morph_size, morph_size ) );
     //dilate(mask, mask, element);
 
     // Drawing the edge black effectively erodes the image.  This may clip off some extra junk from the edges.
     // We'll want to do the contour again and find the larges one so that we remove the clipped portion.
 
-    vector<vector<Point> > contoursSecondRound;
+    vector<vector<cv::Point> > contoursSecondRound;
 
     findContours(mask, contoursSecondRound, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
     int biggestContourIndex = -1;
@@ -333,10 +333,10 @@ Mat CharacterAnalysis::findOuterBoxMask()
     {
       mask = Mat::zeros(thresholds[winningIndex].size(), CV_8U);
 
-      vector<Point> smoothedMaskPoints;
+      vector<cv::Point> smoothedMaskPoints;
       approxPolyDP(contoursSecondRound[biggestContourIndex], smoothedMaskPoints, 2, true);
 
-      vector<vector<Point> > tempvec;
+      vector<vector<cv::Point> > tempvec;
       tempvec.push_back(smoothedMaskPoints);
       //fillPoly(mask, smoothedMaskPoints.data(), smoothedMaskPoints, Scalar(255,255,255));
       drawContours(mask, tempvec,
@@ -398,14 +398,14 @@ Mat CharacterAnalysis::getCharacterMask()
 }
 
 // Returns a polygon "stripe" across the width of the character region.  The lines are voted and the polygon starts at 0 and extends to image width
-vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point> > contours, vector<bool> goodIndices)
+vector<cv::Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<cv::Point> > contours, vector<bool> goodIndices)
 {
   //if (this->debug)
   //  cout << "CharacterAnalysis::getBestVotedLines" << endl;
 
-  vector<Point> bestStripe;
+  vector<cv::Point> bestStripe;
 
-  vector<Rect> charRegions;
+  vector<cv::Rect> charRegions;
 
   for (int i = 0; i < contours.size(); i++)
   {
@@ -430,8 +430,8 @@ vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point>
         //Mat tempImg;
         //result.copyTo(tempImg);
 
-        Rect* leftRect;
-        Rect* rightRect;
+        cv::Rect* leftRect;
+        cv::Rect* rightRect;
         if (charRegions[i].x < charRegions[k].x)
         {
           leftRect = &charRegions[i];
@@ -461,7 +461,7 @@ vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point>
         y1 = leftRect->y;
         y2 = rightRect->y;
 
-        //cv::line(tempImg, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255));
+        //cv::line(tempImg, cv::Point(x1, y1), cv::Point(x2, y2), Scalar(0, 0, 255));
         topLines.push_back(LineSegment(x1, y1, x2, y2));
 
         if (leftRect->y > rightRect->y)	// Rising line, use the bottom right corner of the rect
@@ -477,7 +477,7 @@ vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point>
         y1 = leftRect->y + leftRect->height;
         y2 = rightRect->y + leftRect->height;
 
-        //cv::line(tempImg, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255));
+        //cv::line(tempImg, cv::Point(x1, y1), cv::Point(x2, y2), Scalar(0, 0, 255));
         bottomLines.push_back(LineSegment(x1, y1, x2, y2));
 
         //drawAndWait(&tempImg);
@@ -540,10 +540,10 @@ vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point>
     //winningLines.push_back(topLines[bestScoreIndex]);
     //winningLines.push_back(bottomLines[bestScoreIndex]);
 
-    Point topLeft 		= Point(0, topLines[bestScoreIndex].getPointAt(0) );
-    Point topRight 		= Point(img.cols, topLines[bestScoreIndex].getPointAt(img.cols));
-    Point bottomRight 	= Point(img.cols, bottomLines[bestScoreIndex].getPointAt(img.cols));
-    Point bottomLeft 	= Point(0, bottomLines[bestScoreIndex].getPointAt(0));
+    cv::Point topLeft 		= cv::Point(0, topLines[bestScoreIndex].getPointAt(0) );
+    cv::Point topRight 		= cv::Point(img.cols, topLines[bestScoreIndex].getPointAt(img.cols));
+    cv::Point bottomRight 	= cv::Point(img.cols, bottomLines[bestScoreIndex].getPointAt(img.cols));
+    cv::Point bottomLeft 	= cv::Point(0, bottomLines[bestScoreIndex].getPointAt(0));
 
     bestStripe.push_back(topLeft);
     bestStripe.push_back(topRight);
@@ -554,7 +554,7 @@ vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point>
   return bestStripe;
 }
 
-vector<bool> CharacterAnalysis::filter(Mat img, vector<vector<Point> > contours, vector<Vec4i> hierarchy)
+vector<bool> CharacterAnalysis::filter(Mat img, vector<vector<cv::Point> > contours, vector<Vec4i> hierarchy)
 {
   static int STARTING_MIN_HEIGHT = round (((float) img.rows) * config->charAnalysisMinPercent);
   static int STARTING_MAX_HEIGHT = round (((float) img.rows) * (config->charAnalysisMinPercent + config->charAnalysisHeightRange));
@@ -581,7 +581,7 @@ vector<bool> CharacterAnalysis::filter(Mat img, vector<vector<Point> > contours,
     if ( goodIndicesCount == 0 || goodIndicesCount <= bestFitScore)	// Don't bother doing more filtering if we already lost...
       continue;
     //goodIndices = this->filterByParentContour( contours, hierarchy, goodIndices);
-    vector<Point> lines = getBestVotedLines(img, contours, goodIndices);
+    vector<cv::Point> lines = getBestVotedLines(img, contours, goodIndices);
     goodIndices = this->filterBetweenLines(img, contours, hierarchy, lines, goodIndices);
 
     int segmentCount = getGoodIndicesCount(goodIndices);
@@ -597,7 +597,7 @@ vector<bool> CharacterAnalysis::filter(Mat img, vector<vector<Point> > contours,
 }
 
 // Goes through the contours for the plate and picks out possible char segments based on min/max height
-vector<bool> CharacterAnalysis::filterByBoxSize(vector< vector< Point> > contours, vector<bool> goodIndices, int minHeightPx, int maxHeightPx)
+vector<bool> CharacterAnalysis::filterByBoxSize(vector< vector< cv::Point> > contours, vector<bool> goodIndices, int minHeightPx, int maxHeightPx)
 {
   float idealAspect=config->charWidthMM / config->charHeightMM;
   float aspecttolerance=0.25;
@@ -612,7 +612,7 @@ vector<bool> CharacterAnalysis::filterByBoxSize(vector< vector< Point> > contour
       continue;
 
     //Create bounding rect of object
-    Rect mr= boundingRect(contours[i]);
+    cv::Rect mr= boundingRect(contours[i]);
 
     float minWidth = mr.height * 0.2;
     //Crop image
@@ -629,7 +629,7 @@ vector<bool> CharacterAnalysis::filterByBoxSize(vector< vector< Point> > contour
   return includedIndices;
 }
 
-vector< bool > CharacterAnalysis::filterContourHoles(vector< vector< Point > > contours, vector< Vec4i > hierarchy, vector< bool > goodIndices)
+vector< bool > CharacterAnalysis::filterContourHoles(vector< vector< cv::Point > > contours, vector< Vec4i > hierarchy, vector< bool > goodIndices)
 {
   vector<bool> includedIndices(contours.size());
   for (int j = 0; j < contours.size(); j++)
@@ -661,7 +661,7 @@ vector< bool > CharacterAnalysis::filterContourHoles(vector< vector< Point > > c
 
 // Goes through the contours for the plate and picks out possible char segments based on min/max height
 // returns a vector of indices corresponding to valid contours
-vector<bool> CharacterAnalysis::filterByParentContour( vector< vector< Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices)
+vector<bool> CharacterAnalysis::filterByParentContour( vector< vector< cv::Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices)
 {
   vector<bool> includedIndices(contours.size());
   for (int j = 0; j < contours.size(); j++)
@@ -730,7 +730,7 @@ vector<bool> CharacterAnalysis::filterByParentContour( vector< vector< Point> > 
   return includedIndices;
 }
 
-vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<Point> outerPolygon, vector<bool> goodIndices)
+vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<cv::Point> > contours, vector<Vec4i> hierarchy, vector<cv::Point> outerPolygon, vector<bool> goodIndices)
 {
   static float MIN_AREA_PERCENT_WITHIN_LINES = 0.88;
   static float MAX_DISTANCE_PERCENT_FROM_LINES = 0.15;
@@ -742,15 +742,15 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
   if (outerPolygon.size() == 0)
     return includedIndices;
 
-  vector<Point> validPoints;
+  vector<cv::Point> validPoints;
 
   // Figure out the line height
   LineSegment topLine(outerPolygon[0].x, outerPolygon[0].y, outerPolygon[1].x, outerPolygon[1].y);
   LineSegment bottomLine(outerPolygon[3].x, outerPolygon[3].y, outerPolygon[2].x, outerPolygon[2].y);
 
   float x = ((float) img.cols) / 2;
-  Point midpoint = Point(x, bottomLine.getPointAt(x));
-  Point acrossFromMidpoint = topLine.closestPointOnSegmentTo(midpoint);
+  cv::Point midpoint = cv::Point(x, bottomLine.getPointAt(x));
+  cv::Point acrossFromMidpoint = topLine.closestPointOnSegmentTo(midpoint);
   float lineHeight = distanceBetweenPoints(midpoint, acrossFromMidpoint);
 
   // Create a white mask for the area inside the polygon
@@ -777,7 +777,7 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
 
     bitwise_and(innerArea, outerMask, innerArea);
 
-    vector<vector<Point> > tempContours;
+    vector<vector<cv::Point> > tempContours;
     findContours(innerArea, tempContours,
                  CV_RETR_EXTERNAL, // retrieve the external contours
                  CV_CHAIN_APPROX_SIMPLE  ); // all pixels of each contours );
@@ -822,8 +822,8 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
     }
     
     // Get the absolute distance from the top and bottom lines
-    Point closestTopPoint = topLine.closestPointOnSegmentTo(contours[i][highPointIndex]);
-    Point closestBottomPoint = bottomLine.closestPointOnSegmentTo(contours[i][lowPointIndex]);
+    cv::Point closestTopPoint = topLine.closestPointOnSegmentTo(contours[i][highPointIndex]);
+    cv::Point closestBottomPoint = bottomLine.closestPointOnSegmentTo(contours[i][lowPointIndex]);
     
     float absTopDistance = distanceBetweenPoints(closestTopPoint, contours[i][highPointIndex]);
     float absBottomDistance = distanceBetweenPoints(closestBottomPoint, contours[i][lowPointIndex]);
@@ -840,7 +840,7 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
   return includedIndices;
 }
 
-std::vector< bool > CharacterAnalysis::filterByOuterMask(vector< vector< Point > > contours, vector< Vec4i > hierarchy, std::vector< bool > goodIndices)
+std::vector< bool > CharacterAnalysis::filterByOuterMask(vector< vector< cv::Point > > contours, vector< Vec4i > hierarchy, std::vector< bool > goodIndices)
 {
   float MINIMUM_PERCENT_LEFT_AFTER_MASK = 0.1;
   float MINIMUM_PERCENT_OF_CHARS_INSIDE_PLATE_MASK = 0.6;
@@ -931,7 +931,7 @@ bool CharacterAnalysis::verifySize(Mat r, float minHeightPx, float maxHeightPx)
     return false;
 }
 
-vector<Point> CharacterAnalysis::getCharArea()
+vector<cv::Point> CharacterAnalysis::getCharArea()
 {
   const int MAX = 100000;
   const int MIN= -1;
@@ -953,13 +953,13 @@ vector<Point> CharacterAnalysis::getCharArea()
     }
   }
 
-  vector<Point> charArea;
+  vector<cv::Point> charArea;
   if (leftX != MAX && rightX != MIN)
   {
-    Point tl(leftX, topLine.getPointAt(leftX));
-    Point tr(rightX, topLine.getPointAt(rightX));
-    Point br(rightX, bottomLine.getPointAt(rightX));
-    Point bl(leftX, bottomLine.getPointAt(leftX));
+    cv::Point tl(leftX, topLine.getPointAt(leftX));
+    cv::Point tr(rightX, topLine.getPointAt(rightX));
+    cv::Point br(rightX, bottomLine.getPointAt(rightX));
+    cv::Point bl(leftX, bottomLine.getPointAt(leftX));
     charArea.push_back(tl);
     charArea.push_back(tr);
     charArea.push_back(br);

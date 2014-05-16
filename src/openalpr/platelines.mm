@@ -50,20 +50,21 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
   
   // Do a bilateral filter to clean the noise but keep edges sharp
   Mat smoothed(inputImage.size(), inputImage.type());
-  adaptiveBilateralFilter(inputImage, smoothed, Size(3,3), 45, 45);
-  
+  // there is no adaptiveBilateralFilter in cv:: (only in cv::ocl:: but we wont have ocl in ios)
+//TODO: FIXING adaptiveBilateralFilter
+  //adaptiveBilateralFilter(inputImage, smoothed, cv::Size(3,3), 45, 45);
   
   
   int morph_elem  = 2;
   int morph_size = 2;
-  Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
+  Mat element = getStructuringElement( morph_elem, cv::Size( 2*morph_size + 1, 2*morph_size+1 ), cv::Point( morph_size, morph_size ) );
 
   
   Mat edges(inputImage.size(), inputImage.type());
   Canny(smoothed, edges, 66, 133);
 
   // Create a mask that is dilated based on the detected characters
-  vector<vector<Point> > polygons;
+  vector<vector<cv::Point> > polygons;
   polygons.push_back(charRegion->charAnalysis->charArea);
   
   Mat mask = Mat::zeros(inputImage.size(), CV_8U);
@@ -145,7 +146,7 @@ vector<LineSegment> PlateLines::getLines(Mat edges, float sensitivityMultiplier,
   for( size_t i = 0; i < allLines.size(); i++ )
   {
     float rho = allLines[i][0], theta = allLines[i][1];
-    Point pt1, pt2;
+    cv::Point pt1, pt2;
     double a = cos(theta), b = sin(theta);
     double x0 = a*rho, y0 = b*rho;
 
@@ -171,8 +172,8 @@ vector<LineSegment> PlateLines::getLines(Mat edges, float sensitivityMultiplier,
         // Helps with debugging/rounding issues later
         LineSegment top(0, 0, edges.cols, 0);
         LineSegment bottom(0, edges.rows, edges.cols, edges.rows);
-        Point p1 = line.intersection(bottom);
-        Point p2 = line.intersection(top);
+        cv::Point p1 = line.intersection(bottom);
+        cv::Point p2 = line.intersection(top);
         filteredLines.push_back(LineSegment(p1.x, p1.y, p2.x, p2.y));
       }
     }

@@ -39,15 +39,15 @@ class CharacterAnalysis
     Mat plateMask;
 
     Mat bestThreshold;
-    vector<vector<Point> > bestContours;
+    vector<vector<cv::Point> > bestContours;
     vector<Vec4i> bestHierarchy;
     vector<bool> bestCharSegments;
     int bestCharSegmentsCount;
 
     LineSegment topLine;
     LineSegment bottomLine;
-    vector<Point> linePolygon;
-    vector<Point> charArea;
+    vector<cv::Point> linePolygon;
+    vector<cv::Point> charArea;
 
     LineSegment charBoxTop;
     LineSegment charBoxBottom;
@@ -57,7 +57,7 @@ class CharacterAnalysis
     bool thresholdsInverted;
 
     vector<Mat> thresholds;
-    vector<vector<vector<Point> > > allContours;
+    vector<vector<vector<cv::Point> > > allContours;
     vector<vector<Vec4i> > allHierarchy;
     vector<vector<bool> > charSegments;
 
@@ -73,17 +73,17 @@ class CharacterAnalysis
     Mat findOuterBoxMask( );
 
     bool isPlateInverted();
-    vector<bool> filter(Mat img, vector<vector<Point> > contours, vector<Vec4i> hierarchy);
+    vector<bool> filter(Mat img, vector<vector<cv::Point> > contours, vector<Vec4i> hierarchy);
 
-    vector<bool> filterByBoxSize(vector<vector<Point> > contours, vector<bool> goodIndices, int minHeightPx, int maxHeightPx);
-    vector<bool> filterByParentContour( vector< vector< Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
-    vector<bool> filterContourHoles(vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
-    vector<bool> filterByOuterMask(vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
+    vector<bool> filterByBoxSize(vector<vector<cv::Point> > contours, vector<bool> goodIndices, int minHeightPx, int maxHeightPx);
+    vector<bool> filterByParentContour( vector< vector< cv::Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
+    vector<bool> filterContourHoles(vector<vector<cv::Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
+    vector<bool> filterByOuterMask(vector<vector<cv::Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
 
-    vector<Point> getCharArea();
-    vector<Point> getBestVotedLines(Mat img, vector<vector<Point> > contours, vector<bool> goodIndices);
-    //vector<Point> getCharSegmentsBetweenLines(Mat img, vector<vector<Point> > contours, vector<Point> outerPolygon);
-    vector<bool> filterBetweenLines(Mat img, vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<Point> outerPolygon, vector<bool> goodIndices);
+    vector<cv::Point> getCharArea();
+    vector<cv::Point> getBestVotedLines(Mat img, vector<vector<cv::Point> > contours, vector<bool> goodIndices);
+    //vector<cv::Point> getCharSegmentsBetweenLines(Mat img, vector<vector<cv::Point> > contours, vector<cv::Point> outerPolygon);
+    vector<bool> filterBetweenLines(Mat img, vector<vector<cv::Point> > contours, vector<Vec4i> hierarchy, vector<cv::Point> outerPolygon, vector<bool> goodIndices);
 
     bool verifySize(Mat r, float minHeightPx, float maxHeightPx);
 

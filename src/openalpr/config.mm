@@ -20,7 +20,7 @@
 #include "config.h"
 
 
-Config::Config(const std::string country, const std::string config_file)
+Config::Config(const std::string country, const std::string config_file, const std::string pathToRuntimeDataDir)
 {
   
   string debug_message = "";
@@ -75,6 +75,10 @@ Config::Config(const std::string country, const std::string config_file)
   
   
   loadValues(country);
+    
+    if (pathToRuntimeDataDir.compare("") != 0) {
+        runtimeBaseDir = pathToRuntimeDataDir;
+    }
   
   
   if (DirectoryExists(this->runtimeBaseDir.c_str()) == false)
