@@ -73,12 +73,11 @@ Config::Config(const std::string country, const std::string config_file, const s
    
   this->country = country;
   
-  
-  loadValues(country);
-    
     if (pathToRuntimeDataDir.compare("") != 0) {
         runtimeBaseDir = pathToRuntimeDataDir;
     }
+  
+  loadValues(country);
   
   
   if (DirectoryExists(this->runtimeBaseDir.c_str()) == false)
@@ -109,8 +108,9 @@ Config::~Config()
 
 void Config::loadValues(string country)
 {
-  
-  runtimeBaseDir = getString("common", "runtime_dir", "/usr/share/openalpr/runtime_data");
+    if (runtimeBaseDir.compare("") == 0) { // if runtimedir is not set
+        runtimeBaseDir = getString("common", "runtime_dir", "/usr/share/openalpr/runtime_data");
+    }
   
   opencl_enabled = getBoolean("common", "opencl_enabled", false);
   multithreading_cores = getInt("common", "multithreading_cores", 1);

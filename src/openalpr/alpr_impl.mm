@@ -21,9 +21,9 @@
 
 void plateAnalysisThread(void* arg);
 
-AlprImpl::AlprImpl(const std::string country, const std::string configFile)
+AlprImpl::AlprImpl(const std::string country, const std::string configFile, const std::string runtimeDataDir)
 {
-  config = new Config(country, configFile);
+  config = new Config(country, configFile, runtimeDataDir);
   
   // Config file or runtime dir not found.  Don't process any further.
   if (config->loaded == false)
@@ -44,29 +44,6 @@ AlprImpl::AlprImpl(const std::string country, const std::string configFile)
   this->defaultRegion = "";
   
 }
-
-AlprImpl::AlprImpl(const std::string country, const std::string configFile, const std::string runtimeDataDir) {
-    config = new Config(country, configFile, runtimeDataDir);
-    
-    // Config file or runtime dir not found.  Don't process any further.
-    if (config->loaded == false)
-    {
-        plateDetector = ALPR_NULL_PTR;
-        stateIdentifier = ALPR_NULL_PTR;
-        ocr = ALPR_NULL_PTR;
-        return;
-    }
-    
-    plateDetector = new RegionDetector(config);
-    stateIdentifier = new StateIdentifier(config);
-    ocr = new OCR(config);
-    setNumThreads(0);
-    
-    this->detectRegion = DEFAULT_DETECT_REGION;
-    this->topN = DEFAULT_TOPN;
-    this->defaultRegion = "";
-}
-
 
 AlprImpl::~AlprImpl()
 {
@@ -372,8 +349,9 @@ std::string AlprImpl::getVersion()
 {
   std::stringstream ss;
   
+  // actually set by cmake ... but we are building with only xcode :-/
   //ss << OPENALPR_MAJOR_VERSION << "." << OPENALPR_MINOR_VERSION << "." << OPENALPR_PATCH_VERSION;
-  ss << "Version WIHTOUT FUCKING AMBIGIOUS CLASSES!!!";
+    ss << "OpenALPR iOS compatible version";
   return ss.str();
 }
 

@@ -23,13 +23,9 @@
 
 // ALPR code
 
-Alpr::Alpr(const std::string country, const std::string configFile)
+Alpr::Alpr(const std::string country, const std::string configFile, const std::string runtimeDataDir)
 {
-  impl = new AlprImpl(country, configFile);
-}
-
-Alpr::Alpr(const std::string country, const std::string configFile, const std::string runtimeDataDir) {
-    impl = new AlprImpl(country, configFile, runtimeDataDir);
+  impl = new AlprImpl(country, configFile, runtimeDataDir);
 }
 
 
