@@ -51,8 +51,17 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
   // Do a bilateral filter to clean the noise but keep edges sharp
   Mat smoothed(inputImage.size(), inputImage.type());
   // there is no adaptiveBilateralFilter in cv:: (only in cv::ocl:: but we wont have ocl in ios)
-//TODO: FIXING adaptiveBilateralFilter
+    // adaptiveBilateralFilter was removed from OpenCV:
+    // http://code.opencv.org/issues/3340
   //adaptiveBilateralFilter(inputImage, smoothed, cv::Size(3,3), 45, 45);
+    
+    // trying it with normal bilateralFilter without adaptation
+    // filtersize d: 5 -> for realtime application 9 -> for offline appilication
+    // sigmaColor and sigmaSpace are values taken from adaptiveBilateralFilter call
+    //cv::bilateralFilter(inputImage, smoothed, 5, 45, 45);
+    //cv::bilateralFilter(inputImage, smoothed, 4, 30, 30);
+    cv::bilateralFilter(inputImage, smoothed, 5, 100, 100);
+    //smoothed = inputImage;
   
   
   int morph_elem  = 2;
